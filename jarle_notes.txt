@@ -1,0 +1,14 @@
+Kun problem_solver med deepcopy:
+Runtime: 22 s
+Runtime: 30 s
+Runtime: 35 s
+Runtime: 65 s
+---
+
+Kun problem_solver med copy:
+Runtime: 21 s
+Runtime: 28 s
+Runtime: 42 s
+Runtime: 39 s
+Runtime: 63 s
+
