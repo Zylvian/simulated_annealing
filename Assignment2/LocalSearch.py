@@ -25,7 +25,7 @@ class LocalSearch(SearchClass):
     def local_search(self, iterations, prob, version):
         spag = list()
         spag.append(self.init_sol)
-        for _ in range(9):
+        for _ in range(10):
             spag.append(self._run_search(iterations, prob, version))
         return spag
 
@@ -38,8 +38,6 @@ class LocalSearch(SearchClass):
         :param version: Which group of operators to run - 1 or 2.
         :return:
         """
-
-
         # 3. Correctly format initial horrible solution.
         best_sol = self.init_sol
 
@@ -58,15 +56,6 @@ class LocalSearch(SearchClass):
 
             elif version == 2:
                 solman.swap_to_smaller()
-                # if ranman < self.probabilities[0]: # 2-exchange
-                #     solman.swap_to_smaller(2)
-                #
-                # elif ranman < self.probabilities[1]: #3-exchange
-                #     solman.swap_random(3)
-                #
-                # elif ranman < self.probabilities[2]: #1-reinsert
-                #     solman.reinsert()
-
 
         # 3. Swap everything around.
         for _ in range(iterations):

@@ -51,12 +51,12 @@ class ProblemSolver:
         avg_sol_score = statistics.mean([a.score for a in solution_scores])
         improv_score = 100 * (first_sol_score - best_sol.score) / first_sol_score
         runtime = f'{int(time.time() - currtime)} s'
-        # runtime_ms = (time.time() - currtime)*1000
+        runtime_ms = (time.time() - currtime)*1000
 
         print(f'RUNTIME FOR \'{path}\'\nAverage cost: {int(avg_sol_score)}\nBest cost: {best_sol.score}\n'
                 f'Best vector: {best_sol.vector}\n'
               f'Improvement: {round(improv_score, 1)}%\n'
-              f'Runtime: {runtime}\n')
-
+              f'Runtime: {runtime}\n'
+              f'Average runtime: {runtime}')
 
 ProblemSolver().run_search()

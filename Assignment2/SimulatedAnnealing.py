@@ -2,6 +2,7 @@ import copy
 import math
 from random import random
 
+import ujson
 from numpy.matlib import rand
 
 from Assignment2.LocalSearch import LocalSearch
@@ -23,7 +24,8 @@ class SimulatedAnnealing(LocalSearch):
 
             # This line copies the initial solution on init, and continually updates to be
             # the "previous state" of the soldict.
-            self.incumb: SolutionDict = copy.deepcopy(self.solman)
+            # self.incumb: SolutionDict = copy.deepcopy(self.solman)
+            self.incumbman = ujson.dumps(self.solman.soldict)
 
     # Jarle notes
     # Incumb here is an earlier state of the solution object, SolutionDict
@@ -33,8 +35,10 @@ class SimulatedAnnealing(LocalSearch):
     def score_comparer(self, best_sol:Score, new_solvec:list, prob):
         """Overrides superclass' score_comparer."""
 
-        # Get data from previous solution.
-        incumb_vec = self.incumb.get_solution_vector()
+        #load solution
+        incumbcurr = ujson.loads(self.incumbman)
+        incumb_vec = self.solman.get_solution_vector(incumbcurr)
+
         incumb_score = cost_function(incumb_vec, prob)
 
         # Check if the new solution is better.
@@ -42,24 +46,65 @@ class SimulatedAnnealing(LocalSearch):
         new_cost = cost_function(new_solvec, prob)
         diff = new_cost - incumb_score
 
-        # Sim Ann stuff
-        p = math.e**((-diff)/self.temperature)
-
         if feasibility and diff < 0:
             # If the current solution is feasible and better, update previous solution.
-            self.incumb = copy.deepcopy(self.solman)
+            self.incumbman = ujson.dumps(self.solman.soldict)
+
             if incumb_score < best_sol.score:
                 # print("New best score")
                 return Score(incumb_vec, incumb_score)
 
         # Whether we should update the solution, even though it's not better.
-        elif feasibility and random() < p:#and the formula
-            self.incumb = copy.deepcopy(self.solman)
+        elif feasibility and random() < math.e**((-diff)/self.temperature):#and the formula
+            self.incumbman = ujson.dumps(self.solman.soldict)
 
         # Else, update the current solution to be the previous solution.
         else:
-            self.solman = copy.deepcopy(self.incumb)
+            self.solman.soldict = incumbcurr
 
         #endif
         self.temperature = self.cooling * self.temperature
         return best_sol
+
+    # # @log_time
+    # def score_comparer(self, best_sol:Score, new_solvec:list, prob):
+    #     """Overrides superclass' score_comparer."""
+    #
+    #     # self.incumb = copy.deepcopy(self.solman)
+    #
+    #     #load solution
+    #
+    #
+    #     # Get data from previous solution.
+    #     incumb_vec = self.incumb.get_solution_vector()
+    #     incumb_score = cost_function(incumb_vec, prob)
+    #
+    #     # Check if the new solution is better.
+    #     feasibility, log = feasibility_check(new_solvec, prob)
+    #     new_cost = cost_function(new_solvec, prob)
+    #     diff = new_cost - incumb_score
+    #
+    #     # Sim Ann stuff
+    #     p = math.e**((-diff)/self.temperature)
+    #
+    #     if feasibility and diff < 0:
+    #         # If the current solution is feasible and better, update previous solution.
+    #         # self.incumb = copy.deepcopy(self.solman)
+    #         self.incumb.overwrite_sol(self.solman.soldict)
+    #         if incumb_score < best_sol.score:
+    #             # print("New best score")
+    #             return Score(incumb_vec, incumb_score)
+    #
+    #     # Whether we should update the solution, even though it's not better.
+    #     elif feasibility and random() < p:#and the formula
+    #         # self.incumb = copy.deepcopy(self.solman)
+    #         self.incumb.overwrite_sol(self.solman.soldict)
+    #
+    #     # Else, update the current solution to be the previous solution.
+    #     else:
+    #         # self.solman = copy.deepcopy(self.incumb)
+    #         self.solman.overwrite_sol(self.incumb.soldict)
+    #
+    #     #endif
+    #     self.temperature = self.cooling * self.temperature
+    #     return best_sol

@@ -12,12 +12,16 @@
 # largest_key = max(dictman, key=dictman.get)
 # print(largest_key)
 
-import numpy as np
-# print(np.arrange(3).reshape(3,3))
-vehicles = [0, 1, 2, 4, 5]
-calls = [1,2,3,4,5,6]
-a = np.array(vehicles, np.int32).reshape(len(vehicles), 1)
-a = np.empty([len(vehicles), len(calls)])
-print(a)
-print(a[0,0] >= 1)
-print(a[0,0])
+# import numpy as np
+# # print(np.arrange(3).reshape(3,3))
+# vehicles = [0, 1, 2, 4, 5]
+# calls = [1,2,3,4,5,6]
+# a = np.array(vehicles, np.int32).reshape(len(vehicles), 1)
+# a = np.empty([len(vehicles), len(calls)])
+# print(a)
+# print(a[0,0] >= 1)
+# print(a[0,0])
+
+import ujson
+a = {1:[1,2,3,4,5], 2:[1,2,3,4,5]}
+ujson.dumps(a)

@@ -1,3 +1,4 @@
+import copy
 import random
 from typing import Tuple, Any
 
@@ -9,6 +10,9 @@ class SolutionDict:
         self.soldict = {}
         for vehicle in self.vehicles:
             self.soldict[vehicle] = []
+
+    def overwrite_sol(self, new_sol: dict):
+        self.soldict = copy.deepcopy(new_sol)
 
 
     def move_elem(self, key_from:int, key_to:int, elem:int):
@@ -80,24 +84,9 @@ class SolutionDict:
 
     def swap_to_smaller(self):
         """Swap an order from big to small list"""
-        # vecs = self.get_random_keys(3)
-        # veclists = tuple(map(
-        #     lambda keyman: self.soldict.get(keyman), vecs
-        # ))
-        # vecs_comb = list(zip(vecs, veclists))
-        #
-        # # Get smallest and biggest list.
-        # tupcomp = lambda tupman: len(tupman[1])
-        # small_vec, small_list = min(vecs_comb, key=tupcomp)
-        # # small_vec, _ = min(veclists, key=len)
-        # large_vec, largest_list = max(vecs_comb, key=tupcomp)
-        #
-        # smallest_key = min(self.soldict, key=len(self.soldict.get))
-        # largest_key = max(self.soldict, key=len(self.soldict.get))
 
         smallest_key = min(self.soldict, key=lambda x: len(set(self.soldict[x])))
         largest_key = max(self.soldict, key=lambda x: len(set(self.soldict[x])))
-
 
         if smallest_key != largest_key:
             # Get random order number from largest list.
@@ -115,10 +104,14 @@ class SolutionDict:
         else:
             return -1
 
-    def get_solution_vector(self):
+    def get_solution_vector(self, external_sol=None):
         # Make dict into vector
+        if external_sol:
+            the_items = external_sol.items()
+        else:
+            the_items = self.soldict.items()
         solution_vector = []
-        for curr_v, curr_calls in self.soldict.items():
+        for curr_v, curr_calls in the_items:
             solution_vector.extend(curr_calls)
             solution_vector.append(0)
 
