@@ -3,7 +3,6 @@ import math
 from random import random
 
 import ujson
-from numpy.matlib import rand
 
 from Assignment2.LocalSearch import LocalSearch
 from Assignment2.SolutionDict import SolutionDict
@@ -34,9 +33,10 @@ class SimulatedAnnealing(LocalSearch):
     # @log_time
     def score_comparer(self, best_sol:Score, new_solvec:list, prob):
         """Overrides superclass' score_comparer."""
-
+        #
         #load solution
-        incumbcurr = ujson.loads(self.incumbman)
+        incumbcurr:dict = ujson.loads(self.incumbman)
+        incumbcurr = {int(k):v for (k, v) in incumbcurr.items()}
         incumb_vec = self.solman.get_solution_vector(incumbcurr)
 
         incumb_score = cost_function(incumb_vec, prob)
@@ -50,8 +50,8 @@ class SimulatedAnnealing(LocalSearch):
             # If the current solution is feasible and better, update previous solution.
             self.incumbman = ujson.dumps(self.solman.soldict)
 
+
             if incumb_score < best_sol.score:
-                # print("New best score")
                 return Score(incumb_vec, incumb_score)
 
         # Whether we should update the solution, even though it's not better.
@@ -65,46 +65,3 @@ class SimulatedAnnealing(LocalSearch):
         #endif
         self.temperature = self.cooling * self.temperature
         return best_sol
-
-    # # @log_time
-    # def score_comparer(self, best_sol:Score, new_solvec:list, prob):
-    #     """Overrides superclass' score_comparer."""
-    #
-    #     # self.incumb = copy.deepcopy(self.solman)
-    #
-    #     #load solution
-    #
-    #
-    #     # Get data from previous solution.
-    #     incumb_vec = self.incumb.get_solution_vector()
-    #     incumb_score = cost_function(incumb_vec, prob)
-    #
-    #     # Check if the new solution is better.
-    #     feasibility, log = feasibility_check(new_solvec, prob)
-    #     new_cost = cost_function(new_solvec, prob)
-    #     diff = new_cost - incumb_score
-    #
-    #     # Sim Ann stuff
-    #     p = math.e**((-diff)/self.temperature)
-    #
-    #     if feasibility and diff < 0:
-    #         # If the current solution is feasible and better, update previous solution.
-    #         # self.incumb = copy.deepcopy(self.solman)
-    #         self.incumb.overwrite_sol(self.solman.soldict)
-    #         if incumb_score < best_sol.score:
-    #             # print("New best score")
-    #             return Score(incumb_vec, incumb_score)
-    #
-    #     # Whether we should update the solution, even though it's not better.
-    #     elif feasibility and random() < p:#and the formula
-    #         # self.incumb = copy.deepcopy(self.solman)
-    #         self.incumb.overwrite_sol(self.solman.soldict)
-    #
-    #     # Else, update the current solution to be the previous solution.
-    #     else:
-    #         # self.solman = copy.deepcopy(self.incumb)
-    #         self.solman.overwrite_sol(self.incumb.soldict)
-    #
-    #     #endif
-    #     self.temperature = self.cooling * self.temperature
-    #     return best_sol

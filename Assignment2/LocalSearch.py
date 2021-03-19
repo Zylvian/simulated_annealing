@@ -55,7 +55,14 @@ class LocalSearch(SearchClass):
                     solman.reinsert()
 
             elif version == 2:
-                solman.swap_to_smaller()
+                if ranman < self.probabilities[0]: # 2-exchange
+                    solman.swap_to_smaller()
+
+                elif ranman < self.probabilities[1]: #3-exchange
+                    solman.hefty_scatter()
+
+                else: #1-reinsert
+                    solman.reinsert_better(prob)
 
         # 3. Swap everything around.
         for _ in range(iterations):
@@ -79,6 +86,9 @@ class LocalSearch(SearchClass):
         for call in self.calls:
             # Select vehicle
             init_sol += 2*[call]
+            # n_nodes = probaaa['n_nodes']
+            # random_node = random.randint(1, n_nodes)
+            # init_sol += 2*[random_node]
 
         init_solvec = [0 for _ in range(len(self.vehicles))]
         init_solvec.extend(init_sol)

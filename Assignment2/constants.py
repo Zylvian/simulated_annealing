@@ -3,9 +3,7 @@ from collections import namedtuple
 Score = namedtuple("Score", ['vector', 'score'])
 
 N_ITERATIONS = 10000
-
 x = "datama/"
-
 paths = [x+a for a in
          [
              "Call_7_Vehicle_3.txt",

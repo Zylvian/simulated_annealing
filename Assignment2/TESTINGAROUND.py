@@ -24,4 +24,7 @@
 
 import ujson
 a = {1:[1,2,3,4,5], 2:[1,2,3,4,5]}
-ujson.dumps(a)
+x = ujson.dumps(a)
+a = ujson.loads(x)
+print(a)
+print(a.get(1))

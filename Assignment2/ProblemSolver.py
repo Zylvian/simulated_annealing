@@ -57,6 +57,6 @@ class ProblemSolver:
                 f'Best vector: {best_sol.vector}\n'
               f'Improvement: {round(improv_score, 1)}%\n'
               f'Runtime: {runtime}\n'
-              f'Average runtime: {runtime}')
+              f'Average runtime: {runtime}\n')
 
 ProblemSolver().run_search()
