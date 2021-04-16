@@ -29,7 +29,7 @@ class ProblemSolver:
             # Local Search
             currtime = time.time()
             probabilities = [0.2, 0.2]
-            ls = LocalSearch(vehicles, calls, probabilities, prob)
+            local_search = LocalSearch(vehicles, calls, probabilities, prob)
             # ls_scores = ls.local_search(N_ITERATIONS, prob)
             # self.score_printer(ls_scores, path + ' - Local Search', currtime)
 
@@ -37,9 +37,10 @@ class ProblemSolver:
             currtime = time.time()
             temp = 10000
             cooling = 0.99999
-            sa = SimulatedAnnealing(temp, cooling, ls)
+            sa = SimulatedAnnealing(temp, cooling, local_search)
             print("Starting simulated annealing...")
-            sa_scores = sa.local_search(N_ITERATIONS, prob, 2)
+            sa_scores = sa.local_search(N_ITERATIONS, 2)
+            # print(sa_scores)
             self.score_printer(sa_scores, path + ' - Simulated Annealing', currtime)
 
     def score_printer(self, solution_scores, path, currtime):
@@ -47,6 +48,7 @@ class ProblemSolver:
         # Printout
         # print(solution_scores)
         first_sol_score = solution_scores[0].score
+        print(solution_scores)
         best_sol:Score = min(solution_scores, key=lambda x: x.score)
         avg_sol_score = statistics.mean([a.score for a in solution_scores])
         improv_score = 100 * (first_sol_score - best_sol.score) / first_sol_score
@@ -59,4 +61,15 @@ class ProblemSolver:
               f'Runtime: {runtime}\n'
               f'Average runtime: {runtime}\n')
 
-ProblemSolver().run_search()
+import cProfile
+cProfile.run('ProblemSolver().run_search()', sort='cumtime')
+
+# import cProfile, pstats
+# profiler = cProfile.Profile()
+# profiler.enable()
+# ProblemSolver().run_search()
+# profiler.disable()
+# stats = pstats.Stats(profiler)
+# stats.strip_dirs()
+# stats.sort_stats('cumtime')
+# stats.print_stats()

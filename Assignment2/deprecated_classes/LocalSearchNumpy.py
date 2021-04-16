@@ -1,13 +1,10 @@
-import copy
 import random
 
-from Assignment2.SolutionDictNumpy import SolutionDictNumpy
+from Assignment2.deprecated_classes.SolutionDictNumpy import SolutionDictNumpy
 from Assignment2.constants import Score
 from Assignment2.pdp_utils.pdp_utils import feasibility_check, cost_function
 from SearchClass import SearchClass
 from SolutionDict import SolutionDict
-
-import numpy as np
 
 
 class LocalSearch(SearchClass):
