@@ -28,7 +28,9 @@ class SimulatedAnnealing(LocalSearch):
             # the "previous state" of the soldict.
             # self.incumb: solutiondict = copy.deepcopy(self.solman)
             self.incumbman = ujson.dumps(self.solman.soldict)
-            self.old_sols = list()
+            self.incumb_cost = float('inf')
+            # self.old_sols = list()
+            self.old_sols_dict = dict()
 
     # Jarle notes
     # Incumb here is an earlier state of the solution object, solutiondict
@@ -46,20 +48,31 @@ class SimulatedAnnealing(LocalSearch):
 
 
         #load solution
-        incumbcurr:dict = ujson.loads(self.incumbman)
-        incumbcurr = {int(k):v for (k, v) in incumbcurr.items()}
-        incumb_vec = self.solman.get_solution_vector(incumbcurr)
+        # incumbcurr:dict = ujson.loads(self.incumbman)
+        # incumbcurr = {int(k):v for (k, v) in incumbcurr.items()}
+        # incumb_vec = self.solman.get_solution_vector(incumbcurr)
 
-        incumb_cost = cost_function(incumb_vec, self.prob)
-        new_cost = cost_function(new_solvec, self.prob)
+        str_new_solvec = str(new_solvec)
+        if str_new_solvec not in self.old_sols_dict:
+            is_completely_new = True
+            new_cost = cost_function(new_solvec, self.prob)
+            feasibility, _ = feasibility_check(new_solvec, self.prob)
+            # self.old_sols_dict[str_new_solvec] = new_cost
+            self.old_sols_dict.setdefault(str_new_solvec, {})['cost'] = new_cost
+            self.old_sols_dict[str_new_solvec]['feasible'] = feasibility
+        else:
+            is_completely_new = False
+            new_cost = self.old_sols_dict[str_new_solvec]['cost']
+            feasibility = self.old_sols_dict[str_new_solvec]['feasible']
+
         # Check if the new solution is better.
-        feasibility, log = feasibility_check(new_solvec, self.prob)
-        diff = new_cost - incumb_cost
+        # feasibility, _ = feasibility_check(new_solvec, self.prob)
+        diff = new_cost - self.incumb_cost
 
         # Checks for old solutions.
-        is_completely_new = self.is_new_solution(new_solvec)
-        if is_completely_new:
-            self.old_sols.append(str(new_solvec))
+        # is_completely_new = self.is_new_solution(new_solvec)
+        # if is_completely_new:
+        #     self.old_sols.append(str(new_solvec))
 
         if op_name not in self.solman.operator_scores:
             self.solman.operator_scores[op_name] = {'score': 0, 'times_used': 0}
@@ -69,6 +82,7 @@ class SimulatedAnnealing(LocalSearch):
         if feasibility and diff < 0:
             # If the new solution is feasible and better than the incumb, update incumb.
             self.incumbman = ujson.dumps(self.solman.soldict)
+            self.incumb_cost = new_cost
 
             # If the cost of previous solution(incumb) is lower, return that as best solution,
             # EVEN after updating the incumb.
@@ -88,9 +102,14 @@ class SimulatedAnnealing(LocalSearch):
         # Whether we should update the solution, even though it's not better.
         elif feasibility and random() < math.e**((-diff)/self.temperature):#and the formula
             self.incumbman = ujson.dumps(self.solman.soldict)
+            self.incumb_cost = new_cost
 
-        # Else, update the current solution to be the previous solution.
+        # Else, update revert to incumbment.
+        # This will update even though the solution is not feasible?
+        # Revert solutiondict to previous solution, aka incumbment.
         else:
+            incumbcurr:dict = ujson.loads(self.incumbman)
+            incumbcurr = {int(k):v for (k, v) in incumbcurr.items()}
             self.solman.soldict = incumbcurr
 
         #endif
@@ -102,11 +121,11 @@ class SimulatedAnnealing(LocalSearch):
         self.temperature = self.cooling * self.temperature
         return best_sol
 
-    def is_new_solution(self, new_sol_vec:list):
-        if str(new_sol_vec) not in self.old_sols:
-            return False
-        else:
-            return True
+    # def is_new_solution(self, new_sol_vec:list):
+    #     if str(new_sol_vec) not in self.old_sols:
+    #         return False
+    #     else:
+    #         return True
 
     def update_op_score(self, op_name, val):
         self.solman.operator_scores[op_name]['score'] += val

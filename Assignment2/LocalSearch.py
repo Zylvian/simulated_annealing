@@ -82,6 +82,7 @@ class LocalSearch(SearchClass):
             
             if iter_nr % 100 == 0 and iter_nr != 0:
                 weights = self.create_new_weights(weights)
+                # print(weights)
 
         # print(weights)
         return best_sol
@@ -120,7 +121,7 @@ class LocalSearch(SearchClass):
     def create_new_weights(self, old_weights:List[Weight]):
         new_op_scores = self.solman.operator_scores
         # self.solman.operator_scores = dict()
-        r = 0.4
+        r = 0.6
 
         new_weights = list()
 

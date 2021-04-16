@@ -4,7 +4,7 @@ Score = namedtuple("Score", ['vector', 'score'])
 Weight = namedtuple("Weight", ['op_name', 'weight'])
 Operator_Score = ("Operator_Score", ['op_name', 'score', 'times_used'])
 
-N_ITERATIONS = 100
+N_ITERATIONS = 10000
 x = "datama/"
 paths = [x+a for a in
          [
